@@ -1,0 +1,107 @@
+
+body {
+  background-color: green;
+}
+
+/* 盤 */
+.stage {
+  display: flex;
+  flex-wrap: wrap; 
+  margin: 10px 60px 10px 50px;
+  width: 220px;
+  height: 220px;
+  border: solid black;
+  border-width: 4px;
+}
+
+/* マス */
+/* 基本マスの枠は右下のみ */
+.square {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border: solid black;
+  border-width: 0 4px 4px 0;
+  cursor: pointer;;
+}
+
+/* 上マスの枠は上右下 */
+.square:nth-child(-n + 4) {
+  border-width: 4px 4px 4px 0;
+  height: 50px;
+}
+
+/* 左マスの枠は左右下 */
+.square:nth-child(4n + 1) {
+  border-width: 0 4px 4px 4px;
+  width: 50px;
+}
+
+/* 左上の枠だけは左上右下 */
+.square:first-child {
+  border-width: 4px;
+  width: 50px;
+  height: 50px;
+}
+
+
+/* 石 */
+.stone {
+  /* position: absolute; */
+  position: relative;
+  top: 5px;
+  left: 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+}
+
+/* テンプレートは映さない */
+#square-template {
+  display: none;
+} 
+
+
+/* テキスト ーーーーーーーーーーーーーーーーーーー*/
+
+/* 通常 */
+.currentPlayer {
+  font-size: large;
+  font-weight: bold;
+  margin: 0px 0px 0px 50px;
+}
+
+#currentTurn {
+  font-size: 30px;
+}
+
+
+/* 開始 */
+.start-text {
+  font-size: large;
+  font-weight: bold;
+  margin: 0px 0px 0px 35px;
+  font-size: 40px;
+}
+
+#stone-put-text {
+  font-size: 25px;
+}
+
+
+/* 終了 */
+.gameEnd {
+  font-size: large;
+  font-weight: bold;
+  margin: 0px 0px 0px 50px;
+  display: none;
+  /* display: block; */
+}
+
+#point,
+#winner,
+#result {
+  font-size: 30px;
+}
+
+
