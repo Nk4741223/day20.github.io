@@ -1,12 +1,20 @@
 'use strict'
 // 1行目に記載している 'use strict' は削除しないでください
 
+// 備考
+//  0:なし
+//  1:黒
+// -1:白
+//  2:壁
 
-// 設定
+// 関数以外の宣言--------------------------
+
+// 設定値の宣言
 const xSquareNum = 4;
 const ySquareNum = xSquareNum;
-let currentColor = 1; //先手は黒
+let currentColor = 1; //先手
 
+// マスの宣言
 const xyState = [
   [2, 2, 2, 2, 2, 2],
   [2, 0, 0, 0, 0, 2],
@@ -16,18 +24,16 @@ const xyState = [
   [2, 2, 2, 2, 2, 2]
 ];
 
-// マス目の宣言
+// マスの１次元配列化（[1]～[16]）
+const numState = [2]; //numState[0]は使わない → 壁の意味の２を代入
+
+// 一般の宣言
 const stage = document.getElementById("stage");
 const squareTemplate = document.getElementById("square-template");
-const numState = [2]; //numState[0]は使わない → 壁の意味の２を代入
 const currentTurnText = document.getElementById("currentTurn");
-
-
-// 開始時の宣言
 const startText = document.getElementById("start-text");
 
 // 終了時の宣言
-let endFrag; 
 const playerText = document.getElementById("playerText");
 const gameEndText = document.getElementById("gameEnd");
 const blackPoint = document.getElementById("blackPoint");
@@ -35,26 +41,33 @@ const whitePoint = document.getElementById("whitePoint");
 const winner = document.getElementById("winner");
 const winText = document.getElementById("winText");
 
+// Passボタンの宣言
+const passButton = document.getElementById("pass-button");
 
-// 終了チェック関数
-function checkGameEnd() {
-  // 終了チェック
-  for (let i = 1; i <= xSquareNum * ySquareNum; i++) {
-    if (numState[i] === 0) {
-      endFrag = false;
-    }
+// 押したときの処理
+passButton.addEventListener('click', function() { 
+  changePlayer(); //プレイヤー交代
+  passButton.style.display = "none"; // PASSボタンを非表示
+
+  // さらにパスならゲーム終了
+  if (getIsPass() === true) {
+    doGameEnd();
   }
+});
 
-  // ゲーム終了なら
-  if (endFrag === true) {
+
+// サブ実行関数の宣言--------------------
+
+// 終了の実行関数
+function doGameEnd() {
     let blackSum = 0;
     let whiteSum = 0;
 
     //ポイント集計
-    for (let i = 0; i < xSquareNum * ySquareNum; i++) {
+    for (let i = 1; i <= xSquareNum * ySquareNum; i++) {
       if (numState[i] === 1) {
         blackSum++;
-      } else {
+      } else if (numState[i] === -1){
         whiteSum++;
       }
     }
@@ -71,32 +84,32 @@ function checkGameEnd() {
       winText.textContent = "";
     }
 
-    // テキスト表示
-    playerText.textContent = "ゲームが終了しました。";
+    // 表示
+    playerText.textContent = "ゲームが終了しました";
     playerText.style.fontSize = 23 + "px";
-    // playerText.style.color = "yellow";
     blackPoint.textContent = blackSum;
     whitePoint.textContent = whiteSum;
     gameEndText.style.display = "block";
-  }
-
-  endFrag = true; //初期化
 }
 
+// プレイヤー交代関数
+function changePlayer() {
+  // ×-1でプレイヤー交代（黒:1 白:-1）
+  currentColor *= -1;
 
-// クリック時の実行関数
-function clickSquare(nowX, nowY, index) {
-
-  // 置けない注意
-  if (numState[index] !== 0) {
-    alert("ここには置けません！");
-    // alert(numState[index]);
-    return; //以降の処理をさせない
+  if (currentColor === 1) {
+    currentTurnText.textContent = "黒";
+    currentTurnText.style.color = "black";
+  } else {
+    currentTurnText.textContent = "白";
+    currentTurnText.style.color = "white";
   }
+}
 
-  startText.style.display = "none";
+// マス裏返し関数
+function flipStone(nowX, nowY, index) {
 
-  // 自分の石を置く
+  // 自分の石を裏返す
   xyState[nowX][nowY] = currentColor;
   numState[index] = currentColor;
   if (currentColor === 1) {
@@ -105,7 +118,7 @@ function clickSquare(nowX, nowY, index) {
     document.querySelector(`[num = '${index}']`).style.backgroundColor ="white"
   }
 
-  // ひっくり返し
+  // 相手の石を裏返す
   // → x++
   if (xyState[nowX + 1][nowY] === -currentColor) { //となりが相手の石
     if (xyState[nowX + 2][nowY] === -currentColor) {
@@ -289,7 +302,6 @@ function clickSquare(nowX, nowY, index) {
     }
   }
 
-
   // ← x-- 
   if (xyState[nowX - 1][nowY] === -currentColor) { //となりが相手の石
     if (xyState[nowX - 2][nowY] === -currentColor) {
@@ -382,7 +394,6 @@ function clickSquare(nowX, nowY, index) {
     }
   }
 
-
   // ↑y--
   if (xyState[nowX][nowY - 1] === -currentColor) { //となりが相手の石
     if (xyState[nowX][nowY - 2] === -currentColor) {
@@ -474,25 +485,187 @@ function clickSquare(nowX, nowY, index) {
 
     }
   }
-
-
-
-  //ゲーム終了かチェック 
-  checkGameEnd();
-
-  // プレイヤー交代
-  currentColor *= -1;
-  if (currentColor === 1) {
-    currentTurnText.textContent = "黒";
-    currentTurnText.style.color = "black";
-  } else {
-    currentTurnText.textContent = "白";
-    currentTurnText.style.color = "white";
-  }
-  
 }
 
 
+// チェック関数------------------
+
+// 裏返せるかチェック関数
+function getIsCanflip(X, Y) {
+
+  // 初期値
+  let isCanflip = false;
+
+  // ひっくり返し
+  // → x++
+  if (xyState[X + 1][Y] === -currentColor) { //となりが相手の石
+    if (xyState[X + 2][Y] === -currentColor) {
+      if (xyState[X + 3][Y] === currentColor) {
+        // 〇〇●
+        isCanflip = true;
+      }
+    } else if (xyState[X + 2][Y] === currentColor) {
+      // 〇●
+      isCanflip = true;
+    }
+  }
+
+  // →↓ x++ y++
+  if (xyState[X + 1][Y + 1] === -currentColor) { //となりが相手の石
+    if (xyState[X + 2][Y + 2] === -currentColor) {
+      if (xyState[X + 3][Y + 3] === currentColor) {
+        // 〇〇●
+        isCanflip = true;
+      }
+    } else if (xyState[X + 2][Y + 2] === currentColor) {
+      // 〇●
+      isCanflip = true;
+    }
+  }
+
+  // ↓ y++
+  if (xyState[X][Y + 1] === -currentColor) { //となりが相手の石
+    if (xyState[X][Y + 2] === -currentColor) {
+      if (xyState[X][Y + 3] === currentColor) {
+        // 〇〇●
+        isCanflip = true;
+      }
+    } else if (xyState[X][Y + 2] === currentColor) {
+      // 〇●
+      isCanflip = true;
+    }
+  }
+
+    // ←↓ x-- y++
+  if (xyState[X - 1][Y + 1] === -currentColor) { //となりが相手の石
+    if (xyState[X - 2][Y + 2] === -currentColor) {
+      if (xyState[X - 3][Y + 3] === currentColor) {
+        // 〇〇●
+        isCanflip = true;
+      }
+    } else if (xyState[X - 2][Y + 2] === currentColor) {
+      // 〇●
+      isCanflip = true;
+    }
+  }
+
+  // ← x-- 
+  if (xyState[X - 1][Y] === -currentColor) { //となりが相手の石
+    if (xyState[X - 2][Y] === -currentColor) {
+      if (xyState[X - 3][Y] === currentColor) {
+        // 〇〇●
+        isCanflip = true;
+      }
+    } else if (xyState[X - 2][Y] === currentColor) {
+      // 〇●
+      isCanflip = true;
+    }
+  }
+
+  // ← x-- ↑y--
+  if (xyState[X - 1][Y - 1] === -currentColor) { //となりが相手の石
+    if (xyState[X - 2][Y - 2] === -currentColor) {
+      if (xyState[X - 3][Y - 3] === currentColor) {
+        // 〇〇●
+        isCanflip = true;
+      }
+    } else if (xyState[X - 2][Y - 2] === currentColor) {
+      // 〇●
+      isCanflip = true;
+    }
+  }
+
+
+  // ↑y--
+  if (xyState[X][Y - 1] === -currentColor) { //となりが相手の石
+    if (xyState[X][Y - 2] === -currentColor) {
+      if (xyState[X][Y - 3] === currentColor) {
+        // 〇〇●
+        isCanflip = true;
+      }
+    } else if (xyState[X][Y - 2] === currentColor) {
+      // 〇●
+      isCanflip = true;
+    }
+  }
+
+  // ↑→ x++ y--
+  if (xyState[X + 1][Y - 1] === -currentColor) { //となりが相手の石
+    if (xyState[X + 2][Y - 2] === -currentColor) {
+      if (xyState[X + 3][Y - 3] === currentColor) {
+        // 〇〇●
+        isCanflip = true;
+      }
+    } else if (xyState[X + 2][Y - 2] === currentColor) {
+      // 〇●
+      isCanflip = true;
+    }
+  }
+
+  return isCanflip;
+}
+
+// マス埋まっているかチェック関数
+function getIsPass() {
+  let isPass = true;
+  
+  // 一つでもひっくり返せるところがあれば
+  for (let j = 1; j <= ySquareNum; j++) {
+    for (let i = 1; i <= xSquareNum; i++) {
+      // 置けて、ひっくり返せる
+      if (xyState[i][j] === 0 && getIsCanflip(i, j) === true) {
+        isPass = false;
+      }
+    }
+  }
+  
+  return isPass;
+}
+
+// 終了チェック関数
+function isCheckFull() {
+  for (let i = 1; i <= xSquareNum * ySquareNum; i++) {
+    if (numState[i] === 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+// メイン関数------------------
+
+// クリック時の実行関数
+function clickSquare(nowX, nowY, index) {
+
+  // 置けない位置なら、アラート表示
+  if (numState[index] !== 0 || getIsCanflip(nowX, nowY) === false) {
+    alert("ここには置けません！");
+    return; //以降の処理をさせない
+  }
+
+  // 開始時テキストを隠す
+  startText.style.display = "none";
+
+  // 石を裏返す
+  flipStone(nowX, nowY, index);
+
+  //ゲーム終了かチェック 
+  if (isCheckFull() === true) {
+    doGameEnd();
+    return; //以降の処理はさせない
+  }
+
+  // プレイヤー交代
+  changePlayer();
+
+  // パスかチェック
+  if (getIsPass() === true) {
+    passButton.style.display = "block"; // PASSボタンを表示
+  }
+}
+
+// 開始の実行関数
 function createSquares() {
   for (let j = 0; j <= (ySquareNum + 1); j++) {
     for (let i = 0; i <= (xSquareNum + 1); i++) {
@@ -513,13 +686,11 @@ function createSquares() {
         } else if (xyState[i][j] === -1) {
           stone.style.backgroundColor ="white"
         }
-        stone.setAttribute("num", (j - 1) * xSquareNum + i); //インデックス番号
-        numState.push(xyState[i][j]); //初期値を配列に格納
+        stone.setAttribute("num", (j - 1) * xSquareNum + i); //インデックス番号の属性追加
+        numState.push(xyState[i][j]); //状態を１次元配列にも追加
 
         // クリックされたら実行
-        square.addEventListener('click', function() {
-          console.log(i, j, (j - 1) * xSquareNum + i);
-          
+        square.addEventListener('click', function() { 
           clickSquare(i, j, (j - 1) * xSquareNum + i);
         });
       }
@@ -529,3 +700,4 @@ function createSquares() {
   
 // 開始
 createSquares();
+

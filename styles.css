@@ -12,7 +12,9 @@ body {
   height: 220px;
   border: solid black;
   border-width: 4px;
+  float: left;
 }
+
 
 /* マス */
 /* 基本マスの枠は右下のみ */
@@ -22,7 +24,7 @@ body {
   height: 50px;
   border: solid black;
   border-width: 0 4px 4px 0;
-  cursor: pointer;;
+  cursor: pointer;
 }
 
 /* 上マスの枠は上右下 */
@@ -66,9 +68,12 @@ body {
 
 /* 通常 */
 .currentPlayer {
+  display: flex;
+  flex-wrap: wrap; 
   font-size: large;
   font-weight: bold;
   margin: 0px 0px 0px 50px;
+  float: left;
 }
 
 #currentTurn {
@@ -82,6 +87,13 @@ body {
   font-weight: bold;
   margin: 0px 0px 0px 35px;
   font-size: 40px;
+}
+
+#game-start-text {
+  color: orange;
+  text-shadow: -1px -1px 0 black, -1px 0 0 black, -1px 1px 0 black,
+                  0 -1px 0 black,                      0 1px 0 black,
+                1px -1px 0 black,  1px 0 0 black,  1px 1px 0 black;
 }
 
 #stone-put-text {
@@ -105,3 +117,69 @@ body {
 }
 
 
+
+/* QRコード */
+.QR {
+  display: flex;
+  position: relative;
+  top: 10px;
+  left: 100px;
+  width: 228px;
+  height: 228px;
+}
+.QR-text {
+  display: flex;
+  position: relative;
+  top: 40px;
+  left: 193px;
+  height: 90px;
+  font-size: large;
+  font-weight: bold;
+}
+
+
+.pass-button {
+  font-size: large;
+  font-weight: bold;
+  padding: 20px;
+  margin: 10px 0px 0px 95px;
+  display:none;
+}
+
+.pass-btn {
+  border-radius: 20px;
+  border-width: 4px;
+  padding: 20px;
+  font-size:20px;
+  font-weight: bold;
+  background-color:orange;
+  /* box-shadow:3px 3px   -10px gray; */
+  box-shadow:3px 3px 15px -10px  gray;
+  cursor: pointer;
+}
+
+
+/* 画面サイズに合わせて調整 */
+/* PC画面 */
+@media (min-width: 768px) {
+  #restart-phone {
+    display: none;
+  }
+}
+
+/* スマホ画面 */
+@media (max-width: 768px) {
+  .stage,
+  .currentPlayer {
+    float: none;
+  }
+   
+  .QR,
+  .QR-text {
+    display: none;
+  }
+
+  #restart-pc {
+    display: none;
+  }
+}

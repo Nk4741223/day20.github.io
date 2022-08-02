@@ -9,33 +9,50 @@
 
 </head>
 <body>
-   <!-- 通常テキスト -->
-  <div class="currentPlayer">
-    <p id="playerText">現在のプレイヤーは<span id="currentTurn">黒</span>です</p>
+  <!-- 通常テキスト -->
+  <div>
+    <div class="currentPlayer">
+      <p id="playerText">現在のプレイヤーは<span id="currentTurn">黒</span>です</p>
+    </div>
+    <div class="QR-text">
+      <p>スマホでも遊べます</p>
+    </div>
   </div>
-
+    
   <!-- 盤 -->
   <div id="stage" class="stage"></div>
 
   <!-- マス・石のテンプレート -->
-  <div id="square-template" class="square">
-    <div class="stone"></div>
+  <div>
+  <!-- <div class="outline"> -->
+    <div id="square-template" class="square">
+      <div class="stone"></div>
+    </div>
+    
+    <!-- QRコード -->
+    <div class="QR">
+      <img src="image.png" title="QRコード">
+    </div>
   </div>
+    
 
-  <!-- QRコード -->
-  <div id="QR"><a href=""></a></div>
+  <!-- パスボタン -->
+  <div class="pass-button" id="pass-button">
+    <button class="pass-btn">PASS</button>
+  </div>
 
   <!-- 開始テキスト -->
   <div class="start-text" id="start-text">
-    <p>GAME START</p>
-    <p id="stone-put-text">★黒石を置いてください！</p>
+    <p id="game-start-text">GAME START</p>
+    <p id="stone-put-text">★黒石を置いてください</p>
   </div> 
 
   <!-- 終了テキスト -->
   <div class="gameEnd" id="gameEnd">
     <p id="point">黒：<span id="blackPoint">10</span> ,  白：<span id="whitePoint">20</span></p>
     <p><span id="result">結果：</span><span id="winner">黒</span><span id="winText">の勝ちです</span></p>
-    <p>★ゲームを再開する場合は「F5キー」を押してください。</p>
+    <p id="restart-pc">★ゲームを再開する場合は「F5キー」を押してください。</p>
+    <p id="restart-phone">★ゲームを再開する場合は、画面を更新してください。</p>
   </div>
 
   <script type="text/javascript" src="script.js"></script>
