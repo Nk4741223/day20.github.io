@@ -1,6 +1,8 @@
 
 body {
   background-color: green;
+  /* background-color: lightcoral; */
+  /* background-color: yellowgreen; */
 }
 
 /* 盤 */
@@ -25,6 +27,9 @@ body {
   border: solid black;
   border-width: 0 4px 4px 0;
   cursor: pointer;
+  /* background-color: green; */
+  /* background-color: lightgreen; */
+  /* background-color: #228B22; */
 }
 
 /* 上マスの枠は上右下 */

@@ -33,6 +33,7 @@ const squareTemplate = document.getElementById("square-template");
 const currentTurnText = document.getElementById("currentTurn");
 const startText = document.getElementById("start-text");
 
+
 // 終了時の宣言
 const playerText = document.getElementById("playerText");
 const gameEndText = document.getElementById("gameEnd");
@@ -48,11 +49,15 @@ const passButton = document.getElementById("pass-button");
 passButton.addEventListener('click', function() { 
   changePlayer(); //プレイヤー交代
   passButton.style.display = "none"; // PASSボタンを非表示
-
+  
   // さらにパスならゲーム終了
   if (getIsPass() === true) {
     doGameEnd();
+    return;
   }
+  
+  // クリック音
+  document.getElementById("pass_sound").play();
 });
 
 
@@ -62,6 +67,9 @@ passButton.addEventListener('click', function() {
 function doGameEnd() {
     let blackSum = 0;
     let whiteSum = 0;
+
+    // 終了音
+    document.getElementById("end_sound").play();
 
     //ポイント集計
     for (let i = 1; i <= xSquareNum * ySquareNum; i++) {
@@ -490,7 +498,7 @@ function flipStone(nowX, nowY, index) {
 
 // チェック関数------------------
 
-// 裏返せるかチェック関数
+// 裏返せるかチェック関数 
 function getIsCanflip(X, Y) {
 
   // 初期値
@@ -562,7 +570,7 @@ function getIsCanflip(X, Y) {
     }
   }
 
-  // ← x-- ↑y--
+  // ←↑ x-- y--
   if (xyState[X - 1][Y - 1] === -currentColor) { //となりが相手の石
     if (xyState[X - 2][Y - 2] === -currentColor) {
       if (xyState[X - 3][Y - 3] === currentColor) {
@@ -575,8 +583,7 @@ function getIsCanflip(X, Y) {
     }
   }
 
-
-  // ↑y--
+  // ↑ y--
   if (xyState[X][Y - 1] === -currentColor) { //となりが相手の石
     if (xyState[X][Y - 2] === -currentColor) {
       if (xyState[X][Y - 3] === currentColor) {
@@ -615,6 +622,9 @@ function getIsPass() {
       // 置けて、ひっくり返せる
       if (xyState[i][j] === 0 && getIsCanflip(i, j) === true) {
         isPass = false;
+
+        // 置けるとこは黄緑色に
+        document.querySelector(`[indexToColor = '${(j - 1) * xSquareNum + i}']`).style.backgroundColor ="yellowgreen";
       }
     }
   }
@@ -644,6 +654,13 @@ function clickSquare(nowX, nowY, index) {
     return; //以降の処理をさせない
   }
 
+  // 色リセット、押したとこは色付け
+  for (let i = 1; i <= xSquareNum * ySquareNum; i++) {
+    document.querySelector(`[indexToColor = '${i}']`).style.backgroundColor ="green";
+  }
+  document.querySelector(`[indexToColor = '${index}']`).style.backgroundColor ="#CD5C5C";
+
+
   // 開始時テキストを隠す
   startText.style.display = "none";
 
@@ -655,6 +672,9 @@ function clickSquare(nowX, nowY, index) {
     doGameEnd();
     return; //以降の処理はさせない
   }
+
+  // 石の音を鳴らす
+  document.getElementById("stone_sound").play();
 
   // プレイヤー交代
   changePlayer();
@@ -678,7 +698,7 @@ function createSquares() {
         square.removeAttribute("id"); //テンプレート用のid属性を削除
         stage.appendChild(square); //盤に追加
         
-        // 属性追加
+        // 色塗り、num属性追加
         const stone = square.querySelector('.stone');
 
         if (xyState[i][j] === 1) {
@@ -687,6 +707,7 @@ function createSquares() {
           stone.style.backgroundColor ="white"
         }
         stone.setAttribute("num", (j - 1) * xSquareNum + i); //インデックス番号の属性追加
+        square.setAttribute("indexToColor", (j - 1) * xSquareNum + i); //インデックス番号の属性追加
         numState.push(xyState[i][j]); //状態を１次元配列にも追加
 
         // クリックされたら実行
