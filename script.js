@@ -57,6 +57,7 @@ passButton.addEventListener('click', function() {
   }
   
   // クリック音
+  document.getElementById("pass_sound").load();
   document.getElementById("pass_sound").play();
 });
 
@@ -69,6 +70,7 @@ function doGameEnd() {
     let whiteSum = 0;
 
     // 終了音
+    document.getElementById("end_sound").load();
     document.getElementById("end_sound").play();
 
     //ポイント集計
@@ -650,7 +652,15 @@ function clickSquare(nowX, nowY, index) {
 
   // 置けない位置なら、アラート表示
   if (numState[index] !== 0 || getIsCanflip(nowX, nowY) === false) {
-    alert("ここには置けません！");
+
+    // 音
+    document.getElementById("boo_sound").load();
+    document.getElementById("boo_sound").play();
+
+    // 待ち
+    // sleep(1000);
+
+    // alert("ここには置けません！");
     return; //以降の処理をさせない
   }
 
@@ -658,7 +668,7 @@ function clickSquare(nowX, nowY, index) {
   for (let i = 1; i <= xSquareNum * ySquareNum; i++) {
     document.querySelector(`[indexToColor = '${i}']`).style.backgroundColor ="green";
   }
-  document.querySelector(`[indexToColor = '${index}']`).style.backgroundColor ="#CD5C5C";
+  document.querySelector(`[indexToColor = '${index}']`).style.backgroundColor ="orange";
 
 
   // 開始時テキストを隠す
@@ -674,6 +684,7 @@ function clickSquare(nowX, nowY, index) {
   }
 
   // 石の音を鳴らす
+  document.getElementById("stone_sound").load();
   document.getElementById("stone_sound").play();
 
   // プレイヤー交代
