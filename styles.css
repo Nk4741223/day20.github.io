@@ -114,7 +114,7 @@ body {
   top: 0px;
   font-size: large;
   font-weight: bold;
-  margin: 0px 0px 0px 35px;
+  margin: 0px 0px 0px 27px;
   font-size: 40px;
   /* padding: 0px 0px 0px 0px; */
 }
@@ -227,7 +227,7 @@ body {
   display:block;
   float: left;
   padding: 0px;
-  margin: 0px 0px 0px 13px;
+  margin: 0px 0px 0px 12px;
 }
 
 .replay-button {
