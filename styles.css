@@ -1,8 +1,6 @@
 
 body {
   background-color: green;
-  /* background-color: lightcoral; */
-  /* background-color: yellowgreen; */
 }
 
 /* 盤 */
@@ -27,9 +25,6 @@ body {
   border: solid black;
   border-width: 0 4px 4px 0;
   cursor: pointer;
-  /* background-color: green; */
-  /* background-color: lightgreen; */
-  /* background-color: #228B22; */
 }
 
 /* 上マスの枠は上右下 */
@@ -51,10 +46,13 @@ body {
   height: 50px;
 }
 
+/* .square:hover {
+  background-color: orange;
+} */
+
 
 /* 石 */
 .stone {
-  /* position: absolute; */
   position: relative;
   top: 5px;
   left: 5px;
@@ -77,12 +75,16 @@ body {
   flex-wrap: wrap; 
   font-size: large;
   font-weight: bold;
-  margin: 0px 0px 0px 50px;
+  margin: 0px 0px 0px 55px;
   float: left;
 }
 
 #currentTurn {
   font-size: 30px;
+}
+
+#playerText {
+  color: green;
 }
 
 
@@ -101,18 +103,43 @@ body {
                 1px -1px 0 black,  1px 0 0 black,  1px 1px 0 black;
 }
 
-#stone-put-text {
-  font-size: 25px;
+.start-text {
+  display: none;
 }
 
+/* 開始２ */
+.start-text2 {
+  /* vertical-align: top; */
+  position: absolute;
+  top: 0px;
+  font-size: large;
+  font-weight: bold;
+  margin: 0px 0px 0px 35px;
+  font-size: 40px;
+  /* padding: 0px 0px 0px 0px; */
+}
+
+#game-start-text2 {
+  color: orange;
+  text-shadow: -1px -1px 0 black, -1px 0 0 black, -1px 1px 0 black,
+                  0 -1px 0 black,                      0 1px 0 black,
+                1px -1px 0 black,  1px 0 0 black,  1px 1px 0 black;
+}
+
+
+.no {
+  font-size: large;
+  font-weight: bold;
+  margin: 0px 0px 0px 35px;
+  font-size: 40px;
+}
 
 /* 終了 */
 .gameEnd {
   font-size: large;
   font-weight: bold;
-  margin: 0px 0px 0px 50px;
+  margin: 0px 0px 0px 57px;
   display: none;
-  /* display: block; */
 }
 
 #point,
@@ -121,6 +148,9 @@ body {
   font-size: 30px;
 }
 
+#white-point-text{
+  color: white;
+}
 
 
 /* QRコード */
@@ -140,37 +170,85 @@ body {
   height: 90px;
   font-size: large;
   font-weight: bold;
+  color:  green;
+}
+
+.QR-text2 {
+  position: absolute;
+  top: 47px;
+  /* top: 0px; */
+  left: 479px;
+  height: 90px;
+  font-size: large;
+  font-weight: bold;
+  color: black;
 }
 
 
-.pass-button {
+.pass-button,
+.choose-player-button
+.replay-button {
   font-size: large;
   font-weight: bold;
   padding: 20px;
   margin: 10px 0px 0px 95px;
-  display:none;
+  display: none;
 }
 
-.pass-btn {
+
+.pass-btn,
+.player1-btn,
+.player2-btn,
+.replay-btn {
   border-radius: 20px;
   border-width: 4px;
   padding: 20px;
   font-size:20px;
   font-weight: bold;
   background-color:orange;
-  /* box-shadow:3px 3px   -10px gray; */
   box-shadow:3px 3px 15px -10px  gray;
   cursor: pointer;
+  transition: all  0.3s ease;
+}
+
+.pass-btn:hover,
+.player1-btn:hover,
+.player2-btn:hover,
+.replay-btn:hover {
+  background-color: lightsalmon;
+  padding: 30px;
+  font-size: 30px;
 }
 
 
-/* 画面サイズに合わせて調整 */
-/* PC画面 */
-@media (min-width: 768px) {
-  #restart-phone {
-    display: none;
-  }
+
+/* 上書き */
+.choose-player-button {
+  display:block;
+  float: left;
+  padding: 0px;
+  margin: 0px 0px 0px 13px;
 }
+
+.replay-button {
+  display: none;
+  margin: 15px 0px 0px 80px;
+}
+
+
+.com-pass-text {
+  display: flex;
+  flex-wrap: wrap; 
+  font-size: large;
+  font-weight: bold;
+  margin: 0px 0px 0px 25px;
+  color: orange;
+  text-shadow: -1px -1px 0 black, -1px 0 0 black, -1px 1px 0 black,
+                  0 -1px 0 black,                      0 1px 0 black,
+                1px -1px 0 black,  1px 0 0 black,  1px 1px 0 black;
+  display: none;
+}
+
 
 /* スマホ画面 */
 @media (max-width: 768px) {
@@ -178,13 +256,10 @@ body {
   .currentPlayer {
     float: none;
   }
-   
-  .QR,
-  .QR-text {
-    display: none;
-  }
 
-  #restart-pc {
+  .QR,
+  .QR-text,
+  .QR-text2 {
     display: none;
   }
 }

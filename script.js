@@ -32,7 +32,11 @@ const stage = document.getElementById("stage");
 const squareTemplate = document.getElementById("square-template");
 const currentTurnText = document.getElementById("currentTurn");
 const startText = document.getElementById("start-text");
+const startText2 = document.getElementById("start-text2");
+const comPassText = document.getElementById("com-pass-text");
 
+let isWithComputer;
+let isStart = false;
 
 // 終了時の宣言
 const playerText = document.getElementById("playerText");
@@ -42,10 +46,16 @@ const whitePoint = document.getElementById("whitePoint");
 const winner = document.getElementById("winner");
 const winText = document.getElementById("winText");
 
-// Passボタンの宣言
-const passButton = document.getElementById("pass-button");
 
-// 押したときの処理
+// ボタンの宣言
+const passButton = document.getElementById("pass-button");
+const player1Button = document.getElementById("player1-button");
+const player2Button = document.getElementById("player2-button");
+const replayButton = document.getElementById("replay-button");
+
+
+
+// ▼Passボタンの処理
 passButton.addEventListener('click', function() { 
   changePlayer(); //プレイヤー交代
   passButton.style.display = "none"; // PASSボタンを非表示
@@ -55,23 +65,95 @@ passButton.addEventListener('click', function() {
     doGameEnd();
     return;
   }
+
+  // if (isWithComputer) {
+  //   currentTurnText.textContent = "あなた（黒）";
+  // } else {
+  //   currentTurnText.textContent = "先手（黒）";
+  // }
+  // currentTurnText.style.color = "black";
   
   // クリック音
   document.getElementById("pass_sound").load();
   document.getElementById("pass_sound").play();
+
+  // コンピュータで、今の色が白(コンピュータカラー)
+  if (isWithComputer === true && currentColor === -1) {
+    window.setTimeout(doComputer, 800);
+    return;
+  }  
 });
+
+// ▼プレイヤー選択ボタンの処理
+player1Button.addEventListener('click', function() { 
+  isWithComputer = true;
+  clickStatrt();
+});
+
+player2Button.addEventListener('click', function() { 
+  isWithComputer = false;
+  clickStatrt();
+});
+
+// ▼リプレイボタンの処理
+replayButton.addEventListener('click', function() { 
+  // クリック音
+  document.getElementById("pass_sound").load();
+  document.getElementById("pass_sound").play();
+
+  // 初期化
+  isStart = false;
+
+  // リロード
+  window.setTimeout(function() {
+    window.location.reload()}, 200);
+});
+
+
+
+// sleepの宣言
+function sleep(waitMsec) {
+  var startMsec = new Date();
+
+  // 指定ミリ秒間だけループさせる（CPUは常にビジー状態）
+  while (new Date() - startMsec < waitMsec);
+}
 
 
 // サブ実行関数の宣言--------------------
 
-// 終了の実行関数
+// ◆開始ボタンの実行関数
+function clickStatrt() {
+  isStart = true;
+
+  // 置けるとこを色付け
+  getIsPass();
+
+  // 表示切替
+  playerText.style.color = "black";
+  player1Button.style.display = "none";
+  player2Button.style.display = "none";
+  startText2.style.display = "none";
+  if (isWithComputer) {
+    currentTurnText.textContent = " あなた（黒）";
+  } else {
+    currentTurnText.textContent = " 先手（黒）";
+  }
+  currentTurnText.style.color = "black";
+
+  // クリック音
+  document.getElementById("pass_sound").load();
+  document.getElementById("pass_sound").play();
+}
+
+// ◆終了の実行関数
 function doGameEnd() {
     let blackSum = 0;
     let whiteSum = 0;
 
-    // 終了音
-    document.getElementById("end_sound").load();
-    document.getElementById("end_sound").play();
+    comPassText.style.display = "none";
+
+  
 
     //ポイント集計
     for (let i = 1; i <= xSquareNum * ySquareNum; i++) {
@@ -82,17 +164,41 @@ function doGameEnd() {
       }
     }
 
+    let loseFlag = false;
+    
     // 勝敗判定
     if (blackSum > whiteSum) {
-      winner.textContent = "黒";
+      if (isWithComputer) {
+        winner.textContent = " あなた（黒）";
+      } else {
+        winner.textContent = " 先手（黒）";
+      }
       winner.style.color = "black";
     } else if (blackSum < whiteSum) {
-      winner.textContent = "白";
+      if (isWithComputer) {
+        winner.textContent = " コンピュータ（白）";
+        loseFlag = true;
+      } else {
+        winner.textContent = " 後手（白）";
+      }
       winner.style.color = "white";
     } else {
       winner.textContent = "引き分け";
       winText.textContent = "";
+      if (isWithComputer) {
+        loseFlag = true;
+      }
     }
+
+    //終了音 
+    if (loseFlag) {
+      document.getElementById("lose_sound").load();
+      document.getElementById("lose_sound").play();
+    } else { //コンピュータ相手に勝てなかったとき
+      document.getElementById("end_sound").load();
+      document.getElementById("end_sound").play();
+    }
+
 
     // 表示
     playerText.textContent = "ゲームが終了しました";
@@ -100,23 +206,32 @@ function doGameEnd() {
     blackPoint.textContent = blackSum;
     whitePoint.textContent = whiteSum;
     gameEndText.style.display = "block";
+    replayButton.style.display = "block";
 }
 
-// プレイヤー交代関数
+// ◆プレイヤー交代関数
 function changePlayer() {
   // ×-1でプレイヤー交代（黒:1 白:-1）
   currentColor *= -1;
 
   if (currentColor === 1) {
-    currentTurnText.textContent = "黒";
+    if (isWithComputer) {
+      currentTurnText.textContent = " あなた（黒）";
+    } else {
+      currentTurnText.textContent = " 先手（黒）";
+    }
     currentTurnText.style.color = "black";
   } else {
-    currentTurnText.textContent = "白";
+    if (isWithComputer) {
+      currentTurnText.textContent = " コンピュータ（白）";
+    } else {
+      currentTurnText.textContent = " 後手（白）";
+    }
     currentTurnText.style.color = "white";
   }
 }
 
-// マス裏返し関数
+// ◆マス裏返し関数
 function flipStone(nowX, nowY, index) {
 
   // 自分の石を裏返す
@@ -497,10 +612,50 @@ function flipStone(nowX, nowY, index) {
   }
 }
 
+// ◆コンピュータ実行
+function doComputer() {
 
-// チェック関数------------------
+  // パスかどうか
+  if (getIsPass() === true) {
+    
+    changePlayer(); //プレイヤー交代
+    comPassText.style.display = "block"; //PASSテキストを表示
+    
+    // さらにパスならゲーム終了
+    if (getIsPass() === true) {
+      doGameEnd();
+      return;
+    }
+    return;
+  }
 
-// 裏返せるかチェック関数 
+  // 置けるマス配列を宣言
+  let squaresCanFlip = [];
+
+  //置けるマスを抽出 
+  for (let j = 1; j <= ySquareNum; j++) {
+    for (let i = 1; i <= xSquareNum; i++) {
+      // 置けて、ひっくり返せる
+      if (xyState[i][j] === 0 && getIsCanflip(i, j) === true) {
+        squaresCanFlip.push([i, j, (j - 1) * xSquareNum + i])
+      }
+    }
+  }
+
+  // ランダム
+  const randomSquare = Math.floor(Math.random() * squaresCanFlip.length);
+
+  // 待ち時間
+  // sleep(800);
+
+  // マスを押したときと同じ処理
+  clickSquare(squaresCanFlip[randomSquare][0], squaresCanFlip[randomSquare][1], squaresCanFlip[randomSquare][2]);
+}
+
+
+// チェック関数------------------------------------------------------
+
+// ●裏返せるかチェック関数 
 function getIsCanflip(X, Y) {
 
   // 初期値
@@ -614,7 +769,7 @@ function getIsCanflip(X, Y) {
   return isCanflip;
 }
 
-// マス埋まっているかチェック関数
+// ●マス埋まっているかチェック関数
 function getIsPass() {
   let isPass = true;
   
@@ -626,7 +781,11 @@ function getIsPass() {
         isPass = false;
 
         // 置けるとこは黄緑色に
-        document.querySelector(`[indexToColor = '${(j - 1) * xSquareNum + i}']`).style.backgroundColor ="yellowgreen";
+        if (currentColor === 1) {
+          document.querySelector(`[indexToColor = '${(j - 1) * xSquareNum + i}']`).style.backgroundColor ="yellowgreen";
+        } else {
+          document.querySelector(`[indexToColor = '${(j - 1) * xSquareNum + i}']`).style.backgroundColor ="lightgreen";
+        }
       }
     }
   }
@@ -634,7 +793,7 @@ function getIsPass() {
   return isPass;
 }
 
-// 終了チェック関数
+// ●終了チェック関数
 function isCheckFull() {
   for (let i = 1; i <= xSquareNum * ySquareNum; i++) {
     if (numState[i] === 0) {
@@ -645,10 +804,14 @@ function isCheckFull() {
 }
 
 
-// メイン関数------------------
+// メイン関数----------------------------------------------------------------------
 
-// クリック時の実行関数
+// ★クリック時の実行関数
 function clickSquare(nowX, nowY, index) {
+
+  comPassText.style.display = "none";
+
+  sleep(200);
 
   // 置けない位置なら、アラート表示
   if (numState[index] !== 0 || getIsCanflip(nowX, nowY) === false) {
@@ -657,11 +820,8 @@ function clickSquare(nowX, nowY, index) {
     document.getElementById("boo_sound").load();
     document.getElementById("boo_sound").play();
 
-    // 待ち
-    // sleep(1000);
-
     // alert("ここには置けません！");
-    return; //以降の処理をさせない
+    return;
   }
 
   // 色リセット、押したとこは色付け
@@ -670,9 +830,6 @@ function clickSquare(nowX, nowY, index) {
   }
   document.querySelector(`[indexToColor = '${index}']`).style.backgroundColor ="orange";
 
-
-  // 開始時テキストを隠す
-  startText.style.display = "none";
 
   // 石を裏返す
   flipStone(nowX, nowY, index);
@@ -690,13 +847,22 @@ function clickSquare(nowX, nowY, index) {
   // プレイヤー交代
   changePlayer();
 
-  // パスかチェック
+  // コンピュータで、今の色が白(コンピュータカラー)
+  if (isWithComputer === true && currentColor === -1) {
+    getIsPass(); //色塗りだけ
+    window.setTimeout(doComputer, 800);
+    return;
+  }  
+
+  
+  
+  // パスかどうか
   if (getIsPass() === true) {
     passButton.style.display = "block"; // PASSボタンを表示
   }
 }
 
-// 開始の実行関数
+// ★開始の実行関数
 function createSquares() {
   for (let j = 0; j <= (ySquareNum + 1); j++) {
     for (let i = 0; i <= (xSquareNum + 1); i++) {
@@ -723,8 +889,18 @@ function createSquares() {
 
         // クリックされたら実行
         square.addEventListener('click', function() { 
-          clickSquare(i, j, (j - 1) * xSquareNum + i);
+          if (isStart && !(isWithComputer === true && currentColor === -1)) {
+            clickSquare(i, j, (j - 1) * xSquareNum + i);
+          }
         });
+
+        // // ホバーされたら実行
+        // square.addEventListener('mouseover', function() {
+        //   square.style.backgroundColor = 'orange';
+        // });
+        // square.addEventListener('mouseleave', function() {
+        //   square.style.backgroundColor = 'grey';
+        // });
       }
     }
   }
